@@ -1,0 +1,19 @@
+{
+  "name": "web-scraper",
+  "version": "1.0.0",
+  "description": "A simple web scraper using Puppeteer",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.4",
+    "dotenv": "^10.0.0",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "puppeteer": "^24.6.1",
+    "winston": "^3.17.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
