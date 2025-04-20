@@ -5,6 +5,28 @@ const logger = require("../utils/logger");
 const URL =
   "https://passbook.epfindia.gov.in/MemberPassBook/login?error=session-exception";
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000;
+
+async function waitForCaptchaWithRetry(page, retries = 0) {
+  try {
+    const captchaElement = await page.waitForSelector("#captcha_id", {
+      timeout: 10000,
+    });
+    return captchaElement;
+  } catch (error) {
+    if (retries < MAX_RETRIES) {
+      logger.warn(`Retry ${retries + 1}/${MAX_RETRIES} for captcha element`);
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+      await page.reload({ waitUntil: "networkidle0", timeout: 30000 });
+      return waitForCaptchaWithRetry(page, retries + 1);
+    }
+    throw new Error(
+      `Failed to find captcha element after ${MAX_RETRIES} retries`
+    );
+  }
+}
+
 async function scrapeCaptcha(count, page) {
   try {
     if (count > 1) {
@@ -13,9 +35,7 @@ async function scrapeCaptcha(count, page) {
       await page.goto(URL, { waitUntil: "networkidle0", timeout: 30000 });
     }
 
-    const captchaElement = await page.waitForSelector("#captcha_id", {
-      timeout: 10000,
-    });
+    const captchaElement = await waitForCaptchaWithRetry(page);
 
     if (!captchaElement) {
       throw new Error("Captcha element not found");

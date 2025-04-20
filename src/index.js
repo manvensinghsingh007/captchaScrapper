@@ -6,7 +6,7 @@ const path = require("path");
 
 async function main() {
   let successCount = 0;
-  const totalAttempts = 100;
+  const totalAttempts = 10;
 
   const browser = await puppeteer.launch({
     headless: "new",
@@ -37,7 +37,9 @@ async function main() {
   await browser.close();
   // Log the total number of successful attempts
   logger.info(
-    `Scraping completed. Total success: ${successCount}/${totalAttempts}`
+    `Scraping completed. Total success: ${successCount}/${totalAttempts} AND EFFICIENCY: ${
+      (successCount / totalAttempts) * 100
+    }%`
   );
 }
 
